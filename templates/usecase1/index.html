@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}usecase 1 – social reading hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/usecase1.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="usecase-page">
+
+  <header class="usecase-header">
+    <h1>Use case 1</h1>
+    <p class="usecase-subtitle">
+      convert one private highlight into a public post and see how posts by book change.
+    </p>
+  </header>
+
+  <section class="usecase-actions srh-card">
+    <form action="{{ url_for('usecase1.simulate') }}" method="post" class="usecase-actions-form">
+      <button class="srh-btn" type="submit">
+        simulate share as post
+      </button>
+    </form>
+
+    {% if message %}
+      <div class="usecase-message-list">
+        {% for m in message %}
+          <p class="usecase-message-item">{{ m['error'] }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="usecase-results">
+    {% if data|length == 0 %}
+      <div class="srh-card usecase-empty">
+        <p>no data. seed the database and make sure you have at least one post.</p>
+      </div>
+    {% else %}
+      <div class="srh-card">
+        <h2 class="usecase-table-title">posts by book</h2>
+
+        <div class="table-responsive">
+          <table class="table usecase-table mb-0">
+            <thead>
+              <tr>
+                <th>book</th>
+                <th>posts count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in data %}
+                <tr>
+                  <td>{{ item['book_title'] }}</td>
+                  <td>{{ item['post_count'] }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

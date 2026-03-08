@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Create highlight – Social Reading Hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/highlights.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="highlight-create">
+
+  <header class="highlight-header">
+    <h1>Create highlight</h1>
+    <p class="highlight-book-meta">
+      {{ book.title }} by {{ book.author }}
+    </p>
+  </header>
+
+  <form action="{{ url_for('highlights.insert_highlight', book_id=book.id) }}"
+        method="post"
+        enctype="multipart/form-data"
+        class="highlight-form srh-card">
+
+    <div class="highlight-field">
+      <label class="form-label" for="quote">Highlighted text</label>
+      <textarea class="form-control"
+                id="quote"
+                name="quote"
+                rows="4">{{ text }}</textarea>
+    </div>
+
+    <div class="highlight-field">
+      <label class="form-label" for="color">Pick a color</label>
+      <input class="form-control form-control-color"
+             type="color"
+             id="color"
+             name="color"/>
+    </div>
+
+    <div class="highlight-field">
+      <label class="form-label" for="type">Select type</label>
+      <select name="type" id="type" class="form-control">
+        <option value="highlight">Highlight</option>
+        <option value="post">Post</option>
+        <option value="discussion">Discussion</option>
+      </select>
+    </div>
+
+    <div id="is-post" class="highlight-extra mt-3">
+      <div class="highlight-field">
+        <label class="form-label" for="comment">Add a comment (optional)</label>
+        <textarea class="form-control"
+                  id="comment"
+                  name="comment"
+                  rows="4"></textarea>
+      </div>
+      <div class="highlight-field">
+        <label class="form-label" for="background">Upload a background</label>
+        <input type="file"
+               class="form-control"
+               id="background"
+               name="background"/>
+      </div>
+    </div>
+
+    <div id="is-discussion" class="highlight-extra mt-3">
+      <div class="highlight-field">
+        <span class="form-label">State</span>
+        <div class="btn-group" role="group">
+          <input type="radio"
+                 class="btn-check"
+                 name="locked"
+                 id="open"
+                 value="0"
+                 autocomplete="off"
+                 checked>
+          <label class="btn btn-outline-primary" for="open">Open</label>
+
+          <input type="radio"
+                 class="btn-check"
+                 name="locked"
+                 id="locked"
+                 value="1"
+                 autocomplete="off">
+          <label class="btn btn-outline-primary" for="locked">Locked</label>
+        </div>
+      </div>
+
+      <div class="highlight-field mt-3">
+        <label class="form-label" for="visibility">Visibility</label>
+        <select name="visibility"
+                id="visibility"
+                class="form-control">
+          <option value="public" selected>Public</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="highlight-actions mt-3">
+      <button type="submit" class="srh-btn">
+        Publish
+      </button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const typeSelect = document.getElementById('type');
+  const isPostDiv = document.getElementById('is-post');
+  const isDiscussionDiv = document.getElementById('is-discussion');
+
+  function updateVisibility() {
+    const selectedType = typeSelect.value;
+    if (selectedType === 'post') {
+      isPostDiv.style.display = 'block';
+      isDiscussionDiv.style.display = 'none';
+    } else if (selectedType === 'discussion') {
+      isPostDiv.style.display = 'none';
+      isDiscussionDiv.style.display = 'block';
+    } else {
+      isPostDiv.style.display = 'none';
+      isDiscussionDiv.style.display = 'none';
+    }
+  }
+
+  typeSelect.addEventListener('change', updateVisibility);
+  window.onload = updateVisibility;
+</script>
+{% endblock %}

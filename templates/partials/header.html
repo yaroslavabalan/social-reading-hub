@@ -1,0 +1,77 @@
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+{% endblock %}
+
+<header class="site-header">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+  <i class="fa-solid fa-book-open"></i>
+  Social Reading Hub
+</a>
+
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse flex-row justify-content-between" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/">home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('shelves.list') }}">shelves</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('user.profile') }}">my profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('highlights.list') }}">highlights</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('usecase1.index') }}">usecase 1</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('usecase2.view') }}">usecase 2</a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ms-auto">
+          {% if loggedInUser %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"
+                 data-bs-toggle="dropdown"
+                 href="#"
+                 role="button"
+                 aria-expanded="false">
+                {{ loggedInUser.name }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" style="max-width: 90vw; overflow-x: auto;">
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('manager.view_users') }}">switch user</a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form method="post" action="{{ url_for('manager.log_out') }}" style="margin: 0;">
+                    <button type="submit" class="dropdown-item" style="width: 100%; text-align: left;">
+                      log out
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="srh-btn" href="{{ url_for('manager.view_users') }}">user manager</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

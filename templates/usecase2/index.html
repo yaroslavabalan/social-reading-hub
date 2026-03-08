@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}usecase 2 – social reading hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/usecase2.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="usecase-page">
+
+  <header class="usecase-header">
+    <h1>Use case 2</h1>
+    <p class="usecase-subtitle">
+      simulate a scenario and see average reading speed per genre.
+    </p>
+  </header>
+
+  <section class="usecase-actions srh-card">
+    <form action="{{url_for('usecase2.simulate')}}" method="post" class="usecase-actions-form">
+      <button class="btn btn-primary" type="submit">
+          Simulate use case
+      </button>
+      <a class="srh-btn" href="{{ url_for('usecase2.add_indexes') }}">
+          Add indexes
+      </a>
+      <a class="srh-btn" href="{{ url_for('usecase2.drop_indexes') }}">
+          Drop indexes
+      </a>
+    </form>
+
+    {% if message %}
+      <div class="usecase-message mt-3">
+        <p>{{ message }}</p>
+
+        {% if execution_stats %}
+            <h3>Query Execution Statistics</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Statistics</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total Documents Examined</td>
+                            <td>{{ execution_stats.totalDocsExamined | default('N/A') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Total Keys Examined</td>
+                            <td>{{ execution_stats.totalKeysExamined | default('N/A') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Execution Time (ms)</td>
+                            <td>{{ execution_stats.executionTimeMillis | default('N/A') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Documents Returned</td>
+                            <td>{{ execution_stats.nReturned | default('N/A') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Indexes Used</td>
+                            <td>
+                                {% if execution_stats.indexesUsed and execution_stats.indexesUsed|length > 0 %}
+                                    <ul class="mb-0">
+                                    {% for idx in execution_stats.indexesUsed %}
+                                        <li><code>{{ idx }}</code></li>
+                                    {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <span class="text-warning">No indexes used</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <details>
+                <summary>Full Execution Stats (JSON)</summary>
+                <pre class="text-wrap">{{ execution_stats|tojson(indent=2) }}</pre>
+            </details>
+        {% endif %}
+
+        {% if not execution_stats and not simulation_stats %}
+            <div class="alert alert-info mt-4">
+                <strong>No statistics available.</strong> Try switching to MongoDB or run the simulation first.
+            </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+
+    {% if data|length == 0 %}
+      <div class="mt-4 usecase-empty">
+        <p>no data. run the simulation and seed the database.</p>
+      </div>
+    {% else %}
+      <div class="mt-4">
+        <h2 class="usecase-table-title">average reading speed by genre</h2>
+        <div class="table-responsive">
+          <table class="table usecase-table mb-0">
+            <thead>
+              <tr>
+                <th>genre</th>
+                <th>average reading speed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in data %}
+                <tr>
+                  <td>{{ item['genre'] }}</td>
+                  <td>{{ item['average_reading_speed']|round(1) }} words per minute</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

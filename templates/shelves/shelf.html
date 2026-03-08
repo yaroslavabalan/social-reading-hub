@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{{ loggedInUser.name }} shelf {{ shelf.shelf_no }} – social reading hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/shelves.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="shelf-page">
+
+  <header class="shelf-header">
+    <h1>{{ loggedInUser.name }} shelf {{ shelf.shelf_no }}</h1>
+    <p class="shelf-subtitle">
+      books on this shelf.
+    </p>
+
+    <div class="shelf-meta">
+      <span>color</span>
+      <span class="shelf-color-dot" style="background: {{ shelf.color }}"></span>
+      <span class="shelf-color-code">{{ shelf.color }}</span>
+    </div>
+  </header>
+
+  {% if books|length == 0 %}
+    <p class="shelves-empty">
+      no books on this shelf yet.
+    </p>
+  {% else %}
+    <section class="shelf-books-grid">
+      {% for record in books %}
+    <article class="srh-card shelf-book-card">
+          <div class="shelf-book-cover">
+            {% if record.cover_url %}
+              <img src="{{ record.cover_url }}" alt="{{ record.title }}">
+            {% endif %}
+          </div>
+          <div class="shelf-book-body">
+        <h2 class="shelf-book-title">{{ record.title }}</h2>
+            <p class="shelf-book-author">{{ record.author }}</p>
+
+            {% if record.progress is not none %}
+              <p class="shelf-book-progress">
+                progress {{ record.progress }}%
+              </p>
+            {% endif %}
+
+            <div class="shelf-book-actions">
+              <a href="{{ url_for('books.read_book', book_id=record.book_id, shelf_no=shelf.shelf_no) }}"
+                 class="srh-btn srh-btn-xs">
+                read
+              </a>
+
+              <form method="post"
+                    action="{{ url_for('books.remove_from_shelf', book_id=record.book_id, shelf_no=shelf.shelf_no) }}"
+                    class="d-inline-block">
+                <button type="submit" class="btn btn-sm btn-danger">
+                  <i class="fas fa-times"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </section>
+  {% endif %}
+
+  <div class="shelf-footer-actions">
+    <a href="{{ url_for('books.browse', shelf_no=shelf.shelf_no) }}"
+       class="srh-btn srh-btn-ghost">
+      browse books
+    </a>
+
+    <form action="{{ url_for('shelves.delete', shelf_no=shelf.shelf_no) }}"
+          method="post"
+          class="d-inline-block ms-2">
+      <button type="submit" class="btn btn-danger">
+        delete shelf
+      </button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

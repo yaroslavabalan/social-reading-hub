@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Social Reading Hub{% endblock %}
+
+{% block content %}
+<div style="height: 90vh;">
+  <iframe data-start-progress="{{ progress }}" frameborder="0" height="100%" src="{{ book.source }}" width="100%">
+  </iframe>
+</div>
+<div class="my-4">
+  <h3>About the book</h3>
+  <p>{{book.title}} by {{ book.author}}. You can view the original on <a href="https://www.gutenberg.org/ebooks/{{book.project_gutenberg_no}}">Project Gutenberg</a></p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="progressToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto">New progress!</strong>
+      <small>now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      You have read <span id="progressSpan"></span>% of the entire book so far.
+    </div>
+  </div>
+</div>
+
+<script>
+  let isThrottled = false;
+  let latestPercent = 0;
+  let sessionStartTime = Date.now();
+  let sessionStartProgress = 0;
+  let totalWordCount = 0;
+
+  function countWords(text) {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  }
+
+  async function sendProgressUpdate() {
+    isThrottled = true;
+
+    const percentToSend = latestPercent;
+    const currentTime = Date.now();
+    const timeElapsedMinutes = (currentTime - sessionStartTime) / (1000 * 60);
+    const progressMade = percentToSend - sessionStartProgress;
+
+    let readingSpeed = 0;
+    if (timeElapsedMinutes > 0 && totalWordCount > 0) {
+      const wordsRead = (progressMade / 100) * totalWordCount;
+      readingSpeed = wordsRead / timeElapsedMinutes;
+    }
+
+    try {
+      await fetch('{{ url_for("books.update_progress", shelf_no=shelf_no, book_id=book.id) }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          progress: percentToSend,
+          reading_speed: Math.max(0, Math.round(readingSpeed))
+        })
+      });
+
+      const progressToast = document.getElementById('progressToast')
+      const toastSpan = document.getElementById('progressSpan')
+      toastSpan.textContent = percentToSend.toFixed(2)
+
+      const toastBootstrap = bootstrap.Toast.getOrCreateInstance(progressToast)
+        toastBootstrap.show()
+        setTimeout(() => {
+          toastBootstrap.hide()
+        }, 3000)
+    } catch (error) {
+      console.error("Unable to update progress:", error);
+    }
+
+    setTimeout(() => {
+      isThrottled = false;
+
+      if (latestPercent !== percentToSend) {
+        sendProgressUpdate();
+      }
+    }, 10000);
+  }
+
+  function progressEventListener(iframe, docElement) {
+    const scrollTop = docElement.scrollTop || iframe.contentWindow.scrollY;
+    const scrollHeight = docElement.scrollHeight;
+    const clientHeight = docElement.clientHeight;
+
+    let rawPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
+    rawPercent = Math.min(100, Math.max(0, rawPercent));
+
+    latestPercent = Math.round(rawPercent * 100) / 100;
+
+    if (isThrottled && latestPercent !== 100) return;
+
+    sendProgressUpdate();
+  }
+
+  function restoreScroll(iframe, doc, win) {
+    const savedPercent = parseFloat(iframe.getAttribute('data-start-progress')) || 0;
+    latestPercent = savedPercent;
+    sessionStartProgress = savedPercent;
+
+    if (savedPercent > 0) {
+      const scrollHeight = doc.scrollHeight;
+      const clientHeight = doc.clientHeight;
+
+      const targetPixel = (savedPercent / 100) * (scrollHeight - clientHeight);
+
+      win.scrollTo({
+        top: targetPixel,
+        behavior: 'auto'
+      });
+    }
+  }
+
+  function highlight(win) {
+    const selection = win.getSelection();
+
+    if (selection.toString().length > 0) {
+      window.location = '{{ url_for("highlights.create_highlight", book_id=book.id) }}' + '?text=' + encodeURIComponent(selection.toString());
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const iframe = document.querySelector('iframe');
+
+    if (iframe) {
+      const iframe = document.querySelector('iframe');
+
+      iframe.onload = function () {
+        const doc = iframe.contentWindow.document;
+        const docElement = doc.documentElement;
+        const win = iframe.contentWindow;
+
+        sessionStartTime = Date.now();
+        sessionStartProgress = parseFloat(iframe.getAttribute('data-start-progress')) || 0;
+
+        const textContent = doc.body.innerText || doc.body.textContent || '';
+        totalWordCount = countWords(textContent);
+
+        iframe.contentWindow.addEventListener('scroll', function () {
+          progressEventListener(iframe, docElement)
+        });
+
+        doc.addEventListener('mouseup', function () {
+          highlight(win)
+        });
+
+        restoreScroll(iframe, docElement, win);
+      };
+    }
+  });
+</script>
+{% endblock %}

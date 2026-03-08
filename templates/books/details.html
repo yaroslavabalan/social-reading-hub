@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} – Social Reading Hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/browse.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="book-details-page">
+
+  <header class="book-details-header">
+    <p class="book-details-kicker">book details</p>
+    <h1 class="book-details-title">
+      {{ book.title }}
+    </h1>
+    <p class="book-details-author">
+      {{ book.author }}
+    </p>
+  </header>
+
+  <section class="book-details-card srh-card">
+    <div class="book-details-cover">
+      {% if book.cover_url %}
+        <img src="{{ book.cover_url }}" alt="{{ book.title }}">
+      {% else %}
+        <div class="book-details-cover-placeholder">
+          <span>{{ book.title[0] }}</span>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="book-details-body">
+      <ul class="book-details-meta">
+        <li>
+          <span class="book-details-label">year</span>
+          <span class="book-details-value">{{ book.year }}</span>
+        </li>
+        <li>
+          <span class="book-details-label">genre</span>
+          <span class="book-details-value">{{ book.genre }}</span>
+        </li>
+        <li>
+          <span class="book-details-label">project gutenberg</span>
+          <a class="book-details-link"
+             href="https://www.gutenberg.org/ebooks/{{ book.project_gutenberg_no }}">
+            view original page
+          </a>
+        </li>
+      </ul>
+
+      <div class="book-details-actions">
+        <a class="srh-btn srh-btn-xs"
+           href="https://www.gutenberg.org/ebooks/{{ book.project_gutenberg_no }}">
+          open on gutenberg
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

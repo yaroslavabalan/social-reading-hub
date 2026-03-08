@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}your highlights – social reading hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/highlights.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="highlights-page">
+
+  <header class="highlights-header">
+    <h1>Your highlights</h1>
+    <p class="highlights-subtitle">
+      Lines you saved while reading. jump back into the book or clean them up.
+    </p>
+  </header>
+
+  <section class="highlights-section">
+    {% if highlights|length == 0 %}
+      <p class="highlights-empty">
+        no highlights yet. start reading and select text to create one.
+      </p>
+    {% else %}
+      <div class="highlights-list">
+        {% for highlight in highlights %}
+          <article class="srh-card highlight-card">
+            <div class="highlight-side">
+              <div class="highlight-tag">
+                highlight
+              </div>
+              <p class="highlight-time">
+                {{ highlight.raw_attributes.timestamp }}
+              </p>
+            </div>
+
+            <div class="highlight-main">
+              <p class="highlight-text"
+                 style="color: {{ highlight.raw_attributes.color }}">
+                “{{ highlight.raw_attributes.text }}”
+              </p>
+
+              <div class="highlight-footer">
+                <div class="highlight-actions">
+                  <a class="srh-btn srh-btn-ghost srh-btn-xs"
+                     href="{{ url_for('books.details', book_id=highlight.raw_attributes.book_id) }}">
+                    open book
+                  </a>
+
+                  <form action="{{ url_for('highlights.delete_highlight') }}"
+                        class="d-inline-block"
+                        method="post">
+                    <input type="hidden"
+                           value="{{ highlight.id }}"
+                           name="highlight_id">
+                    <button class="highlight-delete" type="submit">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

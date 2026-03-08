@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Profile – Social Reading Hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+
+  <!-- header -->
+  <header class="profile-header">
+    <div>
+      <p class="profile-kicker">Reader profile</p>
+      <h1 class="profile-name">{{ user.name }}</h1>
+      <p class="profile-meta">
+        User ID: {{ user.id }} · Follows: {{ follows }} · Followers: {{ followers }}
+      </p>
+    </div>
+
+    {% if user.id != loggedInUser.id %}
+      <div class="profile-actions">
+        {% if not is_following %}
+          <a href="{{ url_for('user.follow_user', user_id=user.id) }}"
+             class="srh-btn srh-btn--sm">
+            Follow
+          </a>
+        {% else %}
+          <a href="{{ url_for('user.unfollow_user', user_id=user.id) }}"
+             class="srh-btn srh-btn--ghost srh-btn--sm">
+            Stop following
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </header>
+
+  <!-- discussions -->
+  <section class="profile-section">
+    <div class="profile-section-header">
+      <h2>Thoughts worth sharing</h2>
+      <p class="profile-section-subtitle">
+        See how {{ user.name }} reflects on favorite passages — and join the conversation.
+      </p>
+    </div>
+
+    {% if discussions|length == 0 %}
+      <p class="profile-empty">No discussions available.</p>
+    {% else %}
+      <div class="profile-discussion-list">
+        {% for discussion in discussions %}
+          <article class="srh-card discussion-card">
+            <div class="discussion-card-main">
+              <div class="discussion-cover">
+                <!-- Просто кольоровий плейсхолдер, щоб була «картинка» як обкладинка -->
+                <div class="discussion-cover-inner"
+                     style="background: {{ discussion.color }};"></div>
+              </div>
+
+              <div class="discussion-content">
+                <div class="discussion-header-row">
+                  <span class="discussion-label">Discussion</span>
+                  <span class="discussion-date">{{ discussion.timestamp }}</span>
+                </div>
+
+                <blockquote class="discussion-quote">
+                  {{ discussion.text }}
+                </blockquote>
+
+                {% if discussion.locked or discussion.visibility == 'hidden' %}
+                  <div class="discussion-status-row">
+                    {% if discussion.locked %}
+                      <span class="discussion-status-chip">
+                        <i class="fa-solid fa-lock"></i> Locked
+                      </span>
+                    {% endif %}
+                    {% if discussion.visibility == 'hidden' %}
+                      <span class="discussion-status-chip">
+                        <i class="fa-solid fa-eye-slash"></i> Hidden
+                      </span>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                <div class="discussion-footer-row">
+                  <a href="{{ url_for('discussions.discussion', discussion_id=discussion.id) }}"
+                     class="srh-btn srh-btn--ghost srh-btn--xs">
+                    Go to Discussion
+                  </a>
+                  <div class="discussion-icons">
+                    <i class="fa-regular fa-heart"></i>
+                    <i class="fa-regular fa-comment"></i>
+                    <i class="fa-regular fa-paper-plane"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- posts -->
+  <section class="profile-section">
+    <div class="profile-section-header">
+      <h2>Shared posts</h2>
+      <p class="profile-section-subtitle">
+        Highlights that became posts — saved thoughts, covers and comments.
+      </p>
+    </div>
+
+    {% if posts|length == 0 %}
+      <p class="profile-empty">No posts available.</p>
+    {% else %}
+      <div class="profile-grid">
+        {% for post in posts %}
+          <article class="srh-card profile-card profile-post-card">
+            {% if post.background %}
+              <div class="profile-post-image-wrap">
+                <img
+                  src="{{ url_for('highlight_background_file', filename=post.background) }}"
+                  class="profile-card-image"
+                  alt="Post background"
+                >
+              </div>
+            {% endif %}
+
+            <div class="profile-card-body">
+              <p class="profile-post-label">Post</p>
+              <h3 class="profile-card-title" style="color: {{ post.color }}">
+                {{ post.text }}
+              </h3>
+              {% if post.description %}
+                <p class="profile-card-text">
+                  {{ post.description }}
+                </p>
+              {% endif %}
+              <p class="profile-card-meta">
+                {{ post.timestamp }}
+              </p>
+              <a href="{{ url_for('posts.view', post_id=post.id) }}"
+                 class="srh-btn srh-btn--ghost srh-btn--xs">
+                Open post
+              </a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- suggestions -->
+  <section class="profile-section">
+    <div class="profile-section-header">
+      <h2>You may also know…</h2>
+      <p class="profile-section-subtitle">
+        Readers who might share similar tastes.
+      </p>
+    </div>
+
+    {% if suggestions|length == 0 %}
+      <p class="profile-empty">No suggestions available.</p>
+    {% else %}
+      <div class="profile-suggestion-grid">
+        {% for potential in suggestions %}
+          <article class="srh-card profile-suggestion-card">
+            <div class="profile-suggestion-avatar">
+              {{ potential.name[:1] }}
+            </div>
+            <div class="profile-suggestion-body">
+              <h3 class="profile-suggestion-name">
+                <a href="{{ url_for('user.profile', user_id=potential.id) }}">
+                  {{ potential.name }}
+                </a>
+              </h3>
+              <p class="profile-suggestion-meta">
+                ID: {{ potential.id }}
+              </p>
+              <a href="{{ url_for('user.profile', user_id=potential.id) }}"
+                 class="profile-link">
+                View profile
+              </a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

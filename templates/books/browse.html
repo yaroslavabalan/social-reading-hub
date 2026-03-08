@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Browse books – Social Reading Hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/browse.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="browse-page">
+
+  <header class="browse-header">
+    <h1>Explore the library</h1>
+    <p class="browse-subtitle">
+      Find a book you like and add it to your shelf.
+    </p>
+
+    {% if shelf %}
+      <p class="browse-shelf-hint">
+        adding books to <span>shelf {{ shelf.shelf_no }}</span>
+      </p>
+    {% else %}
+      <p class="browse-shelf-hint browse-shelf-hint-light">
+        tip open a shelf first if you want to save books directly to it
+      </p>
+    {% endif %}
+  </header>
+
+  {% if books|length == 0 %}
+    <p class="browse-empty">no books found</p>
+  {% else %}
+    <section class="browse-list">
+      {% for book in books %}
+        <article class="browse-item srh-card">
+          <div class="browse-cover">
+            {% if book.cover_url %}
+              <img src="{{ book.cover_url }}" alt="{{ book.title }}">
+            {% else %}
+              <div class="browse-cover-placeholder">
+                <span>{{ book.title[0] }}</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="browse-body">
+            <p class="browse-genre">
+              {{ book.genre }}
+            </p>
+            <h2 class="browse-title">
+              {{ book.title }}
+            </h2>
+            <p class="browse-author">
+              {{ book.author }}
+            </p>
+
+            <div class="browse-meta-row">
+              <a href="https://www.gutenberg.org/ebooks/{{ book.project_gutenberg_no }}"
+                 class="browse-link-gutenberg">
+                view on project gutenberg
+              </a>
+            </div>
+
+            <div class="browse-actions">
+              <a href="{{ url_for('books.details', book_id=book.id) }}"
+                 class="srh-btn srh-btn-xs">
+                details
+              </a>
+
+              {% if shelf and not book['owned'] %}
+                <form method="post"
+                      action="{{ url_for('books.add_to_shelf',
+                                         book_id=book.id,
+                                         shelf_no=shelf.shelf_no) }}">
+                  <button type="submit" class="srh-btn srh-btn-ghost srh-btn-xs">
+                    save to shelf
+                  </button>
+                </form>
+              {% elif book['owned'] %}
+                <span class="browse-pill-on-shelf">
+                  on your shelf
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </section>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

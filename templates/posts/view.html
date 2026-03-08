@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Post – Social Reading Hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="post-page">
+  <article class="post-card">
+
+    {% if post.raw_attributes.background %}
+      <div class="post-card-image-wrap">
+        <img
+          src="{{ url_for('highlight_background_file', filename=post.raw_attributes.background) }}"
+          class="post-card-image"
+          alt="post background">
+      </div>
+    {% endif %}
+
+    <div class="post-card-body">
+      <header class="post-card-header">
+        <div class="post-avatar">
+          {{ user }}
+        </div>
+        <div class="post-header-text">
+          <p class="post-author">
+            user {{ user }}
+          </p>
+          <p class="post-meta-line">
+            book {{ book }} · {{ post.raw_attributes.timestamp }}
+          </p>
+        </div>
+      </header>
+
+      <p class="post-label">post</p>
+
+      <blockquote class="post-text" style="color: {{ post.raw_attributes.color }}">
+        {{ post.raw_attributes.text }}
+      </blockquote>
+
+      {% if post.raw_attributes.description %}
+        <p class="post-description">
+          {{ post.raw_attributes.description }}
+        </p>
+      {% endif %}
+
+      <footer class="post-footer">
+        <div class="post-icons">
+          <i class="fa-regular fa-heart"></i>
+          <i class="fa-regular fa-comment"></i>
+          <i class="fa-regular fa-paper-plane"></i>
+        </div>
+
+        {% if post.raw_attributes.user_id == loggedInUser['id'] %}
+          <button class="post-delete-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteModal">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        {% endif %}
+      </footer>
+    </div>
+
+  </article>
+</div>
+
+<div class="modal" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">are you sure</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+      </div>
+      <div class="modal-body">
+        <p>do you want to delete only the post or also the highlight</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">
+          close
+        </button>
+
+        <form action="{{ url_for('posts.delete', post_id=post.id) }}"
+              method="post"
+              class="d-inline-block">
+          <button type="submit" class="btn btn-danger">
+            delete post only
+          </button>
+        </form>
+
+        <form action="{{ url_for('highlights.delete_highlight') }}"
+              method="post"
+              class="d-inline-block">
+          <input type="hidden" value="{{ post.id }}" name="highlight_id">
+          <button type="submit" class="btn btn-danger">
+            delete post and highlight
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

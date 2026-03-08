@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Home – Social Reading Hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="home">
+
+  <!-- HERO -->
+ <section class="home-hero">
+
+    <div class="home-hero-text">
+      <span class="home-badge">Social Reading Platform</span>
+
+      <h1>
+        Welcome to<br>
+        Social Reading Hub
+      </h1>
+
+      <p class="home-description">
+        Track your reading, highlight meaningful lines, and share thoughts with others.
+        Create your own shelves and turn reading into a social experience.
+      </p>
+
+      {% if loggedInUser %}
+        <p class="home-user">
+          Currently logged in as <strong>{{ loggedInUser.name }}</strong>
+        </p>
+      {% endif %}
+
+      <div class="home-actions">
+        <a href="{{ url_for('books.browse') }}" class="btn-primary">
+          Browse books
+        </a>
+        <a href="{{ url_for('shelves.list') }}" class="btn-secondary">
+          My shelves
+        </a>
+      </div>
+    </div>
+
+    <div class="home-hero-visual">
+      <img
+        src="{{ url_for('static', filename='images/bookshelf.png') }}"
+        alt="Bookshelf illustration"
+        class="hero-image"
+      >
+    </div>
+
+</section>
+
+</div>
+{% endblock %}

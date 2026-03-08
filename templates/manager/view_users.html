@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}User manager – Social Reading Hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manager.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="manager-page">
+
+  <header class="manager-header">
+    <h1>User manager</h1>
+    <p class="manager-subtitle">
+      Select a user to log in as, or create a new one.
+    </p>
+  </header>
+
+  <section class="manager-grid">
+    {% for user in users %}
+      <article class="srh-card manager-card">
+        <div class="manager-card-main">
+          <h2 class="manager-card-name">{{ user.name }}</h2>
+          <p class="manager-card-id">ID: {{ user.id }}</p>
+          <p class="manager-card-meta">
+            Email: {{ user.email }}<br>
+            Reading speed: {{ user.reading_speed }}
+          </p>
+        </div>
+
+        <div class="manager-card-actions">
+          {% if loggedInUser == None or loggedInUser.id != user.id %}
+            <form action="{{ url_for('manager.select_user') }}" method="post">
+              <button
+                type="submit"
+                class="srh-btn srh-btn--ghost srh-btn--sm"
+                name="user_id"
+                value="{{ user.id }}"
+              >
+                Select user
+              </button>
+            </form>
+          {% else %}
+            <span class="manager-selected">
+              <i class="fa-solid fa-circle-check"></i>
+              Currently selected
+            </span>
+          {% endif %}
+
+          <form action="{{ url_for('manager.remove_user') }}" method="post">
+            <button
+              class="manager-delete-btn"
+              type="submit"
+              name="user_id"
+              value="{{ user.id }}"
+            >
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </form>
+        </div>
+      </article>
+    {% endfor %}
+
+    <!-- Add user card -->
+    <article class="srh-card manager-card manager-card--add">
+      <button class="srh-btn manager-add-btn"
+              data-bs-toggle="modal"
+              data-bs-target="#addUserModal">
+        <i class="fa-solid fa-plus"></i>
+        Add user
+      </button>
+    </article>
+  </section>
+
+</div>
+
+<!-- Add user modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="{{ url_for('manager.add_user') }}" method="post">
+      <div class="modal-content srh-modal">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="addUserModalLabel">Add new user</h1>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text"
+                   class="form-control"
+                   id="name"
+                   name="name">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email"
+                   class="form-control"
+                   id="email"
+                   name="email">
+          </div>
+          <div class="mb-3">
+            <label for="reading_speed" class="form-label">Reading speed</label>
+            <input type="number"
+                   class="form-control"
+                   id="reading_speed"
+                   name="reading_speed"
+                   aria-describedby="readingSpeedHelp">
+            <div id="readingSpeedHelp" class="form-text">
+              Words per minute
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" class="srh-btn">
+            Save user
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

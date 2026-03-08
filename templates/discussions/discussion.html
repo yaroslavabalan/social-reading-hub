@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}discussion – social reading hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/highlights.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="discussion-page">
+
+  <header class="discussion-header">
+    <h1>discussion</h1>
+
+    {% if discussion.visibility == 'hidden' %}
+      <div class="discussion-badge discussion-badge-muted">
+        <i class="fa-solid fa-eye-slash"></i>
+        this discussion is hidden. only you and people with the link can see it.
+      </div>
+    {% endif %}
+  </header>
+
+  <section class="discussion-main srh-card">
+    <div class="discussion-main-top">
+      <div class="discussion-book">
+        <i class="fa-regular fa-bookmark"></i>
+        <span>from book #{{ book }}</span>
+      </div>
+      <div class="discussion-user">
+        <i class="fa-regular fa-user"></i>
+        <span>{{ user }}</span>
+      </div>
+    </div>
+
+    <blockquote class="discussion-quote-text" style="color: {{ discussion.color }}">
+      {{ discussion.text }}
+    </blockquote>
+
+    <div class="discussion-meta-row">
+      <span class="discussion-meta-item">
+        <i class="fa-regular fa-clock"></i>
+        {{ discussion.timestamp }}
+      </span>
+
+      <span class="discussion-meta-item">
+        {% if discussion.locked %}
+          <i class="fa-solid fa-lock"></i> locked
+        {% else %}
+          <i class="fa-solid fa-lock-open"></i> open
+        {% endif %}
+      </span>
+
+      <span class="discussion-meta-item">
+        {% if discussion.visibility == 'public' %}
+          <i class="fa-solid fa-globe"></i> public
+        {% else %}
+          <i class="fa-solid fa-eye-slash"></i> hidden
+        {% endif %}
+      </span>
+    </div>
+
+    {% if discussion.user_id == loggedInUser.id %}
+      <div class="discussion-actions">
+        {% if discussion.visibility == 'public' %}
+          <form action="{{ url_for('discussions.make_hidden', discussion_id=discussion.id) }}"
+                method="post" class="d-inline-block">
+            <button class="srh-btn srh-btn-ghost srh-btn-xs" type="submit">
+              <i class="fa-solid fa-eye-slash"></i>
+              hide discussion
+            </button>
+          </form>
+        {% else %}
+          <form action="{{ url_for('discussions.make_public', discussion_id=discussion.id) }}"
+                method="post" class="d-inline-block">
+            <button class="srh-btn srh-btn-ghost srh-btn-xs" type="submit">
+              <i class="fa-solid fa-eye"></i>
+              make public
+            </button>
+          </form>
+        {% endif %}
+
+        {% if not discussion.locked %}
+          <form action="{{ url_for('discussions.lock_discussion', discussion_id=discussion.id) }}"
+                method="post" class="d-inline-block">
+            <button class="srh-btn srh-btn-ghost srh-btn-xs" type="submit">
+              <i class="fa-solid fa-lock"></i>
+              lock discussion
+            </button>
+          </form>
+        {% else %}
+          <form action="{{ url_for('discussions.unlock_discussion', discussion_id=discussion.id) }}"
+                method="post" class="d-inline-block">
+            <button class="srh-btn srh-btn-ghost srh-btn-xs" type="submit">
+              <i class="fa-solid fa-lock-open"></i>
+              unlock
+            </button>
+          </form>
+        {% endif %}
+
+        <button class="btn btn-danger discussion-delete-btn"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="discussion-comments">
+    <div class="discussion-comments-header">
+      <h2>comments</h2>
+      {% if discussion.locked %}
+        <span class="discussion-badge discussion-badge-muted">
+          this discussion is locked. you can not post new comments.
+        </span>
+      {% endif %}
+    </div>
+
+    {% if comments and comments|length > 0 %}
+      <div class="discussion-comment-list">
+        {% for comment in comments %}
+          <article class="discussion-comment-card">
+            <div class="discussion-comment-avatar">
+              {{ comment.name[:1] }}
+            </div>
+            <div class="discussion-comment-body">
+              <div class="discussion-comment-header">
+                <span class="discussion-comment-name">{{ comment.name }}</span>
+                <span class="discussion-comment-date">{{ comment.timestamp }}</span>
+              </div>
+              <p class="discussion-comment-text">
+                {{ comment.content }}
+              </p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="discussion-empty">no comments yet.</p>
+    {% endif %}
+
+    {% if not discussion.locked %}
+      <form action="{{ url_for('discussions.post_comment', discussion_id=discussion.id) }}"
+            method="post" class="discussion-form">
+        <div class="srh-card discussion-form-card">
+          <div class="card-body p-0">
+            <textarea id="content"
+                      name="content"
+                      class="form-control discussion-textarea"
+                      placeholder="write a comment"></textarea>
+          </div>
+          <div class="card-footer discussion-form-footer">
+            <button class="srh-btn srh-btn-xs" id="post-comment-btn" data-discussion-id="{{ discussion.id }}">
+              post comment
+            </button>
+          </div>
+        </div>
+      </form>
+    {% endif %}
+  </section>
+
+  <!-- delete modal -->
+  <div class="modal" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content srh-modal">
+        <div class="modal-header">
+          <h5 class="modal-title">are you sure</h5>
+          <button type="button" class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="close"></button>
+        </div>
+        <div class="modal-body">
+          <p>delete only the discussion or the highlight and discussion.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal">
+            close
+          </button>
+
+          <form action="{{ url_for('discussions.delete', discussion_id=discussion.id) }}"
+                method="post" class="d-inline-block">
+            <button type="submit" class="btn btn-danger">
+              delete discussion only
+            </button>
+          </form>
+
+          <form action="{{ url_for('highlights.delete_highlight') }}"
+                method="post" class="d-inline-block">
+            <input type="hidden" value="{{ discussion.id }}" name="highlight_id">
+            <button type="submit" class="btn btn-danger">
+              delete discussion and highlight
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

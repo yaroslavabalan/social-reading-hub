@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Your shelves – Social Reading Hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/shelves.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="shelves-page">
+
+  <header class="shelves-header">
+    <h1>{{ loggedInUser.name }}’s shelves</h1>
+    <p class="shelves-subtitle">
+      organize the books you want to read in your own way
+    </p>
+  </header>
+
+  <section class="shelves-grid">
+    {% for shelf in shelves %}
+      <article class="shelf-card srh-card">
+        <div class="shelf-card-main">
+          <h2 class="shelf-card-title">shelf {{ shelf.shelf_no }}</h2>
+        </div>
+
+        <div class="shelf-card-actions">
+          <a href="{{ url_for('shelves.shelf', shelf_no=shelf.shelf_no) }}"
+             class="srh-btn srh-btn-xs">
+            open shelf
+          </a>
+        </div>
+      </article>
+    {% endfor %}
+
+    {% if shelves|length == 0 %}
+      <p class="shelves-empty">
+        no shelves available, please add a shelf
+      </p>
+    {% endif %}
+  </section>
+
+  <div class="shelves-actions">
+    <button data-bs-toggle="modal"
+            data-bs-target="#addShelfModal"
+            class="srh-btn">
+      add new shelf
+    </button>
+  </div>
+
+  <div class="modal fade" id="addShelfModal" tabindex="-1"
+       aria-labelledby="addShelfModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form action="{{ url_for('shelves.create_shelf') }}"
+            enctype="multipart/form-data"
+            method="post">
+        <div class="modal-content srh-modal">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="addShelfModalLabel">add new shelf</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="backgroundImage" class="form-label">upload background image</label>
+              <input class="form-control"
+                     accept="image/jpeg,jpg,png"
+                     type="file"
+                     name="backgroundImage"
+                     id="backgroundImage">
+            </div>
+            <div class="mb-3">
+              <label for="color" class="form-label">pick a color</label>
+              <input type="color"
+                     class="form-control form-control-color"
+                     id="color" name="color"
+                     value="#563d7c"
+                     title="choose your color">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+              close
+            </button>
+            <button type="submit" class="srh-btn">
+              create
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

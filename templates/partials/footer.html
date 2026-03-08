@@ -1,0 +1,61 @@
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+{% endblock %}
+
+
+<footer class="site-footer">
+  <div class="d-flex-1 align-items-center justify-content-center bg-dark text-white p-5">
+    <p class="text-center">Social Reading Hub &copy; 2026</p>
+    <p class="text-center">Currently running on <span class="badge text-bg-info">{{ db_type }}</span> database.</p>
+    <div class="d-flex align-items-center justify-content-center gap-2">
+      <div class="btn-group">
+        <form method="post" action="{{ url_for('manager.seed_db') }}" style="margin: 0;">
+          <button class="btn btn-secondary" style="border-radius: 6px 0 0 6px !important;" type="submit">
+            Generate random data
+          </button>
+        </form>
+        <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+          aria-expanded="false">
+          <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <form method="post" action="{{ url_for('manager.seed_db', size='50') }}" style="margin: 0;">
+              <button type="submit" class="dropdown-item">Small data</button>
+            </form>
+          </li>
+          <li>
+            <form method="post" action="{{ url_for('manager.seed_db', size='100') }}" style="margin: 0;">
+              <button type="submit" class="dropdown-item">Regular data</button>
+            </form>
+          </li>
+          <li>
+            <form method="post" action="{{ url_for('manager.seed_db', size='1000') }}" style="margin: 0;">
+              <button type="submit" class="dropdown-item">Massive data</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+      <form method="post" action="{{ url_for('manager.drop_db') }}" style="margin: 0;">
+        <button type="submit" class="btn btn-secondary" style="width: 100%; text-align: left;">Clear database</button>
+      </form>
+      {% if db_type != 'mongodb' %}
+      <form method="post" action="{{ url_for('manager.switch_db') }}" style="margin: 0;">
+        <input type="hidden" value="mongodb" name="db_type">
+        <button type="submit" class="btn btn-secondary" style="width: 100%; text-align: left;">Switch to
+          MongoDB</button>
+      </form>
+      {% endif%}
+      {% if db_type != 'mysql' %}
+      <form method="post" action="{{ url_for('manager.switch_db') }}" style="margin: 0;">
+        <input type="hidden" value="mysql" name="db_type">
+        <button type="submit" class="btn btn-secondary" style="width: 100%; text-align: left;">Switch to MySQL</button>
+      </form>
+      {% endif%}
+      <form method="post" action="{{ url_for('manager.migrate_db') }}" style="margin: 0;">
+        <button type="submit" class="btn btn-secondary" style="width: 100%; text-align: left;">Migrate to
+          MongoDB</button>
+      </form>
+    </div>
+  </div>
+</footer>
