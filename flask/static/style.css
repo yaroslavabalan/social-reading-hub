@@ -1,0 +1,25 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.site-header {
+  margin-bottom: 2em;
+}
+
+.site-footer {
+  margin-top: auto;
+}
+
+.book-quote-short {
+   overflow: hidden;
+   display: -webkit-box;
+   -webkit-line-clamp: 3;
+           line-clamp: 3;
+   -webkit-box-orient: vertical;
+}

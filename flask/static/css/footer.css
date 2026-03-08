@@ -1,0 +1,90 @@
+/* ===== FOOTER  ===== */
+.site-footer {
+  background: #fbf9e8; /* той самий беж */
+  border-top: 1px solid rgba(0,0,0,0.06);
+  margin-top: 80px;
+}
+
+/* container */
+.site-footer .d-flex-1 {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px;
+  flex-direction: column;
+  gap: 20px;
+  background: transparent !important;
+  color: #1f2937 !important;
+}
+
+
+.site-footer p {
+  margin: 0;
+  font-size: 14px;
+  color: #374151;
+}
+/* ===== FOOTER  ===== */
+.site-footer {
+  background: #fbf9e8;              
+  border-top: 1px solid rgba(0,0,0,0.06);
+  margin-top: 80px;
+}
+
+/* container */
+.site-footer .d-flex-1 {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px;
+  display: flex;                     
+  flex-direction: column;
+  gap: 20px;
+  background: transparent;
+  color: #1f2937;
+}
+
+
+.site-footer p {
+  margin: 0;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* whitebuttons*/
+.site-footer .btn,
+.site-footer .dropdown-menu,
+.site-footer .badge {
+  background: #ffffff;
+  color: #1f2937;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.site-footer .badge {
+  padding: 6px 10px;
+  font-weight: 500;
+}
+
+
+.site-footer .btn:hover,
+.site-footer .dropdown-item:hover {
+  background: #f3f4f6;
+}
+
+
+.site-footer .dropdown-menu {
+  padding: 8px;
+  border-radius: 12px;
+}
+
+
+.site-footer .btn-group,
+.site-footer form {
+  margin: 4px;
+}
+
+/*  row  with buttons */
+.site-footer .d-flex.align-items-center {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}

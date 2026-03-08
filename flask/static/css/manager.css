@@ -1,0 +1,109 @@
+.manager-page {
+  padding-top: 24px;
+}
+
+.manager-header h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.manager-subtitle {
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+.manager-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+/* base card */
+.manager-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 150px;
+}
+
+/* main text */
+.manager-card-name {
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+
+.manager-card-id {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin: 0 0 6px;
+}
+
+.manager-card-meta {
+  font-size: 13px;
+  margin: 0;
+}
+
+/* actions */
+.manager-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.manager-selected {
+  font-size: 13px;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* delete button */
+.manager-delete-btn {
+  border: none;
+  background: transparent;
+  color: #b91c1c;
+  padding: 4px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.manager-delete-btn:hover {
+  background: rgba(185, 28, 28, 0.06);
+}
+
+/* add user card */
+.manager-card--add {
+  align-items: center;
+  justify-content: center;
+}
+
+.manager-add-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* modal small tweaks */
+.srh-modal {
+  border-radius: 16px;
+}
+
+/* small srh button variation */
+.srh-btn--sm {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+/* ghost style */
+.srh-btn--ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.srh-btn--ghost:hover {
+  background: rgba(0, 0, 0, 0.03);
+}

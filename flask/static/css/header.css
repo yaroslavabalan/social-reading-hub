@@ -1,0 +1,97 @@
+/* simple color tokens */
+:root {
+  --srh-bg: #feffeb;
+  --srh-text-main: #111322;
+  --srh-link-soft: #4b5563;
+  --srh-accent: #d89b45;
+  --srh-accent-dark: #c3822c;
+}
+
+/* header wrapper */
+.site-header {
+  background-color: var(--srh-bg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* remove bootstrap grey */
+.site-header .navbar {
+  background-color: transparent !important;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+/* max width for content */
+.site-header .container-fluid {
+  max-width: 1200px;
+}
+
+/* brand */
+.navbar-brand {
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.03em;
+  color: var(--srh-text-main);
+}
+
+.navbar-brand:hover {
+  color: var(--srh-text-main);
+}
+
+/* nav links */
+.navbar-nav .nav-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--srh-link-soft);
+  padding: 6px 12px;
+  text-decoration: none;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+  color: var(--srh-text-main);
+}
+
+/* right side spacing */
+.navbar-nav.ml-auto .nav-item {
+  margin-left: 8px;
+}
+
+/* "User manager" pill button */
+.srh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--srh-accent);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--srh-accent);
+  background-color: transparent;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.srh-btn:hover {
+  background-color: var(--srh-accent);
+  color: #ffffff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* dropdown in header */
+.site-header .dropdown-menu {
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* burger on mobile */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+

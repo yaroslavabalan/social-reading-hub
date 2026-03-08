@@ -1,0 +1,68 @@
+.usecase-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 64px 24px 80px;
+}
+
+.usecase-header h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 32px;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.usecase-subtitle {
+  font-size: 15px;
+  color: #4b5563;
+  margin-bottom: 20px;
+}
+
+.srh-card {
+  background: #fffaf1;
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  border: none;
+}
+
+.usecase-actions {
+  margin-bottom: 24px;
+}
+
+.usecase-actions-form {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.usecase-message-list {
+  margin-top: 12px;
+}
+
+.usecase-message-item {
+  font-size: 14px;
+  color: #b91c1c;
+}
+
+.usecase-results {
+  margin-top: 4px;
+}
+
+.usecase-empty {
+  font-size: 15px;
+  color: #6b7280;
+}
+
+.usecase-table-title {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #111827;
+}
+
+.usecase-table thead th {
+  font-size: 14px;
+  text-transform: lowercase;
+}
+
+.usecase-table tbody td {
+  font-size: 14px;
+}
